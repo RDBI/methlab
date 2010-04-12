@@ -1,4 +1,3 @@
-$METHLAB_AUTOINTEGRATE = true
 module MethLab
     def self.integrate
         ::Object.send(:include, MethLab)
