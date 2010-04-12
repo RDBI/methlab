@@ -23,17 +23,6 @@ module MethLab
         return nil
     end
 
-    def self.transform_type(value_sig, value, key)
-        case value_sig
-        when Array
-            return value_sig.inject(value) { |x, y| transform_type(y, x, key) }
-        when :autobox
-            return value.kind_of?(Array) ? value : [value]
-        end
-
-        return value
-    end
-
     def self.validate_params(signature, *args)
         args = args[0] if args.kind_of?(Array)
         
@@ -56,10 +45,6 @@ module MethLab
 
         if keys.length > 0
             return ArgumentError.new("arguments '#{keys.join(", ")}' were not found but are required by the prototype")
-        end
-
-        args.each do |key, value|
-            args[key] = self.transform_type(signature[key], value, key)
         end
 
         return args
@@ -85,7 +70,8 @@ module MethLab
 end
 
 if __FILE__ == $0
-    named_method(:foo, :stuff => String, :stuff2 => [ /pee/, :required, :autobox ]) { |params| "#{params[:stuff]} - fart - #{params[:stuff2].inspect}" }
+    MethLab.integrate
+    named_method(:foo, :stuff => String, :stuff2 => [ /pee/, :required ]) { |params| "#{params[:stuff]} - fart - #{params[:stuff2].inspect}" }
 
     p foo(:stuff => "stuff", :stuff2 => "pee")
 end
