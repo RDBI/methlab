@@ -105,7 +105,7 @@ syntax.
 
 a) MethLab.integrate does this. If you want it to happen at require
 time, set the global $METHLAB_AUTOINTEGRATE to a true value before
-doinog so. It pollutes ::Object, so be aware of the consequences.
+doing so. It pollutes ::Object, so be aware of the consequences.
 
 TODO
 ----
