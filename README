@@ -96,7 +96,7 @@ would be very expensive, and cause inconsistency if someone were to
 redefine them).
 
 4) I don't want to use MethLab everywhere, but I'd like to use it in
-this specific class.
+a specific class or module.
 
 a) "include MethLab" in your namespace before using the definition
 syntax.
