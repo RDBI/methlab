@@ -123,5 +123,5 @@ if __FILE__ == $0
     p foo(:stuff => "stuff", :stuff2 => "pee")
 
     checked_method(:bar, String, [Integer, :optional]) { |params| p params }
-    bar("foo")
+    bar("foo", "bar")
 end

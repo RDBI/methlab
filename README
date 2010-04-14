@@ -1,0 +1,129 @@
+Yo dawg, I heard you liked methods.
+
+Meth Lab is a method construction toolkit intended to ease parameter
+validation and a number of common "method definition patterns" seen in
+ruby code.
+
+SYNOPSIS
+--------
+
+A lot of times in the programming world, especially in dynamically
+typed languages, we see this pattern:
+
+  def foo(arg1, arg2, arg3)
+    unless arg1.kind_of?(SomeObject)
+      raise "Incorrect object"
+    end
+
+    unless arg2 ... 
+    end
+  end
+
+You get the idea. Additionally, with the use of hashes for emulating
+named parameters, we see a ton of this in the ruby world:
+
+  def bar(*args)
+    args = args[0]
+
+    raise "not a hash" unless args.kind_of?(Hash)
+
+    unless args.has_key?(:some_parameter)
+      raise "'some parameter' does not exist"
+    end
+
+    unless args[:some_parameter].kind_of?(SomeObject)
+      raise "'some parameter' is not a kind of SomeObject"
+    end
+  end
+
+Meth Lab is intended to strip your methods of this wordy, but
+important boilerplate, by making it ideally less wordy and slamming it
+right in the prototype to easily evaluate what it does. Also, it has
+an awesomely apropos name.
+
+USAGE
+-----
+
+The API is less solid than I would like at this point, so I'm
+refraining from adding examples to this documentation quite yet. Until
+then, read the code (__FILE__ at the bottom) and the tests (when
+they're written), they have plenty of examples.
+
+FAQ
+---
+
+1) OMG OMG OMG OMG DUCK TYPING, you don't need this at all.
+
+a) Then don't use it. I will offer a little opinion though: if you
+think duck typing can solve everything, chances are you aren't hitting
+a whole class of edge cases in your code. Also, punk rock is dead, get
+with the times and think for yourself.
+
+2) Exceptions; how do I debug validation failures?
+
+a) Meth Lab works hard to not raise until the last possible minute for
+validation failures. Generally you will see a trace like this:
+
+(lines wrapped for sanity)
+
+    lib/methlab.rb:95:in `bar': value of argument '1' is an invalid
+        type. Requires 'Integer' (ArgumentError)
+            from lib/methlab.rb:126
+
+What's important to understand here is that, short of making you, the
+user, handle raising validation errors yourself (which would kind of
+defeat the point), we raise just above where your code would execute.
+This means that both parts of this trace are significant; the first
+line is the error and the method the error was raised from, but the
+second line is the place that the method was called.
+
+I will not even pretend this is anything other than a "misfeature",
+but it is a consequence to working with a library like this.
+
+MethLab will always raise ArgumentError, which is standard for good
+ruby programs.
+
+3) Don't you solve this with blocks? Are closures an issue?
+
+a) The short, proper answer to this is "yes". The pragmatic answer to
+this is "probably not". Closures are created and there is a
+performance impact to relying on them. I would argue that if
+performance is your concern, you shouldn't be using ruby at all. Meth
+Lab does make every effort possible to not use proc objects where
+possible, e.g., the check methods themselves live in the MethLab
+namespace and are not anonymously injected into your methods (which
+would be very expensive, and cause inconsistency if someone were to
+redefine them).
+
+4) I don't want to use MethLab everywhere, but I'd like to use it in
+this specific class.
+
+a) "include MethLab" in your namespace before using the definition
+syntax.
+
+5) I want to use MethLab everywhere.
+
+a) MethLab.integrate does this. If you want it to happen at require
+time, set the global $METHLAB_AUTOINTEGRATE to a true value before
+doinog so. It pollutes ::Object, so be aware of the consequences.
+
+TODO
+----
+
+* real tests.
+* real documentation.
+* #respond_to? checks.
+* multiplexed array/hash methods.
+* anonymous methods.
+* construction of methods that can take inline blocks 
+  (e.g., "def foo(&block)"). Proc can be used now, but it's
+  not very "rubyish" syntax for the user.
+
+THANKS
+------
+
+* James Tucker (raggi) and "saywatmang" for inspiration and a bit of
+  opinion and code review.
+* Params::Validate and Method::Signatures from CPAN for doing it right
+  first. Imitation is the sincerest form of flattery and good ideas
+  should not be kept in an ivory tower, so prematurely shut it plox.
