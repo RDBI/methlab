@@ -12,30 +12,20 @@ require 'methlab'
 class CheckedClass
     extend MethLab
 
-    named_method(:named, :stuff => String, :stuff2 => [ /pee/, :required ], :stuff3 => :required) do |params| 
+    def_named(:named, :stuff => String, :stuff2 => [ /pee/, :required ], :stuff3 => :required) do |params| 
         [:stuff, :stuff2, :stuff3].collect { |x| params[x] }
     end
 
-    checked_method(:sequential, String, [Integer, :optional]) do |params|
+    def_ordered(:sequential, String, [Integer, :optional]) do |params|
         params
     end
 
-    checked_method(:ranged, (0..9)) do |params|
+    def_ordered(:ranged, (0..9)) do |params|
         params
     end
 end
 
-module CheckedModule
-    extend MethLab
-
-    named_method(:named, :stuff => String, :stuff2 => [ /pee/, :required ], :stuff3 => :required) do |params| 
-        [:stuff, :stuff2, :stuff3].collect { |x| params[x] }
-    end
-
-    checked_method(:sequential, String, [Integer, :optional]) do |params|
-        params
-    end
-end
+# FIXME module tests
 
 class TestChecks < Test::Unit::TestCase
     def setup

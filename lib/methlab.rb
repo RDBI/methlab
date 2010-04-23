@@ -82,7 +82,7 @@ module MethLab
     end
 
     # FIXME build options that these leverage to define
-    def checked_method(method_name, *args, &block)
+    def def_ordered(method_name, *args, &block)
         signature = args
 
         op_index = signature.index(:optional)
@@ -100,7 +100,7 @@ module MethLab
         method_name
     end
 
-    def named_method(method_name, *args, &block)
+    def def_named(method_name, *args, &block)
         signature = args[0]
 
         self.send(:define_method, method_name) do |*args| 
