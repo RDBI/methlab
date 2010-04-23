@@ -68,7 +68,7 @@ validation failures. Generally you will see a trace like this:
 
     lib/methlab.rb:95:in `bar': value of argument '1' is an invalid
         type. Requires 'Integer' (ArgumentError)
-            from lib/methlab.rb:126
+            from lib/my-actual-file.rb:126
 
 What's important to understand here is that, short of making you, the
 user, handle raising validation errors yourself (which would kind of
