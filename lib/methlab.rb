@@ -1,4 +1,7 @@
 module MethLab
+
+    VERSION = "0.0.1"
+
     def self.integrate
         ::Object.send(:include, MethLab)
     end
