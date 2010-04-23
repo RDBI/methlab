@@ -21,6 +21,10 @@ module MethLab
             unless value.to_s =~ value_sig
                 return ArgumentError.new("value of argument '#{key}' does not match this regexp: '#{value_sig.to_s}'")
             end
+        when Range
+            unless value_sig.include?(value)
+                return ArgumentError.new("value of argument '#{key}' does not match range '#{value_sig.inspect}'")
+            end
         end
 
         return nil

@@ -19,6 +19,10 @@ class CheckedClass
     checked_method(:sequential, String, [Integer, :optional]) do |params|
         params
     end
+
+    checked_method(:ranged, (0..9)) do |params|
+        params
+    end
 end
 
 module CheckedModule
@@ -88,5 +92,23 @@ class TestChecks < Test::Unit::TestCase
 
         assert_equal(@checked.sequential("foo"), ["foo"])
         assert_equal(@checked.sequential("foo", 1), ["foo", 1])
+    end
+
+    def test_03_ranges
+        assert(@checked.respond_to?(:ranged))
+
+        assert_raises(ArgumentError.new("value of argument '0' does not match range '0..9'")) do
+            @checked.ranged(-1)
+        end
+
+        assert_raises(ArgumentError.new("value of argument '0' does not match range '0..9'")) do
+            @checked.ranged("foo")
+        end
+
+        assert_raises(ArgumentError.new("value of argument '0' does not match range '0..9'")) do
+            @checked.ranged(10)
+        end
+
+        assert_equal(@checked.ranged(5), [5])
     end
 end
