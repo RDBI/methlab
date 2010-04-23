@@ -46,8 +46,7 @@ USAGE
 
 The API is less solid than I would like at this point, so I'm
 refraining from adding examples to this documentation quite yet. Until
-then, read the code (__FILE__ at the bottom) and the tests (when
-they're written), they have plenty of examples.
+then, read the tests, they have plenty of examples.
 
 FAQ
 ---
@@ -105,7 +104,7 @@ syntax.
 
 a) MethLab.integrate does this. If you want it to happen at require
 time, set the global $METHLAB_AUTOINTEGRATE to a true value before
-doing so. It pollutes ::Object, so be aware of the consequences.
+doing so. These both pollute ::Object, so be aware of the consequences.
 
 TODO
 ----
