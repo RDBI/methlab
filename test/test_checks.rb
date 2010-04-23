@@ -61,7 +61,10 @@ class TestChecks < Test::Unit::TestCase
             @check.named(:stuff => "foo", :stuff3 => nil)
         end
 
-        @check.named(:stuff => "foo", :stuff2 => "poopee", :stuff3 => 1)
+        assert_equal(
+            @check.named(:stuff => "foo", :stuff2 => "poopee", :stuff3 => 1), 
+            ["foo", "poopee", 1]
+        )
     end
 
     def test_02_checked
@@ -83,7 +86,7 @@ class TestChecks < Test::Unit::TestCase
             @check.sequential("foo", 1, nil)
         end
 
-        @check.sequential("foo")
-        @check.sequential("foo", 1)
+        assert_equal(@check.sequential("foo"), ["foo"])
+        assert_equal(@check.sequential("foo", 1), ["foo", 1])
     end
 end
