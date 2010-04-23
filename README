@@ -98,7 +98,7 @@ redefine them).
 4) I don't want to use MethLab everywhere, but I'd like to use it in
 a specific class or module.
 
-a) "include MethLab" in your namespace before using the definition
+a) "extend MethLab" in your namespace before using the definition
 syntax.
 
 5) I want to use MethLab everywhere.
