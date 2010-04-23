@@ -22,10 +22,11 @@ module MethLab
 
         return nil
     end
-
+    
+    # FIXME 'not enough arguments'
     def self.validate_array_params(signature, args)
         unless args.kind_of?(Array)
-            return ArgumentError.new("this method takes plain arguments")
+            return ArgumentError.new("this method takes ordered arguments")
         end
 
         if args.length > signature.length
@@ -34,7 +35,7 @@ module MethLab
 
         args.each_with_index do |value, key|
             unless signature[key]
-                return ArgumentError.new("argument '#{key}' does not exist in prototype")
+                return ArgumentError.new("argument #{key} does not exist in prototype")
             end
 
             if !signature[key].nil?
@@ -67,30 +68,23 @@ module MethLab
         keys = signature.each_key.select { |key| [signature[key]].flatten.include?(:required) and !args.has_key?(key) }
 
         if keys.length > 0
-            return ArgumentError.new("arguments '#{keys.join(", ")}' were not found but are required by the prototype")
+            return ArgumentError.new("argument(s) '#{keys.join(", ")}' were not found but are required by the prototype")
         end
 
         return args
     end
 
-    def self.create_method_boilerplate(method_name, args)
-        signature = args[0]
-
-        obj = self.kind_of?(Module) ? self : self.class
-
-        return signature, obj
-    end
-
+    # FIXME build options that these leverage to define
     def checked_method(method_name, *args, &block)
-        signature, obj = MethLab.create_method_boilerplate(method_name, [args])
+        signature = args
 
         op_index = signature.index(:optional)
 
         if op_index and signature.reject { |x| x == :optional }.length != op_index
             raise ArgumentError, ":optional parameters must be at the end"
         end
-        
-        obj.send(:define_method, method_name) do |*args| 
+       
+        self.send(:define_method, method_name) do |*args| 
             params = MethLab.validate_array_params(signature, args)
             raise params if params.kind_of?(Exception)
             block.call(params)
@@ -100,9 +94,9 @@ module MethLab
     end
 
     def named_method(method_name, *args, &block)
-        signature, obj = MethLab.create_method_boilerplate(method_name, args)
+        signature = args[0]
 
-        obj.send(:define_method, method_name) do |*args| 
+        self.send(:define_method, method_name) do |*args| 
             params = MethLab.validate_params(signature, *args)
             raise params if params.kind_of?(Exception)
             block.call(params)
@@ -114,14 +108,4 @@ module MethLab
     if $METHLAB_AUTOINTEGRATE
         integrate
     end
-end
-
-if __FILE__ == $0
-    MethLab.integrate
-    named_method(:foo, :stuff => String, :stuff2 => [ /pee/, :required ]) { |params| "#{params[:stuff]} - fart - #{params[:stuff2].inspect}" }
-
-    p foo(:stuff => "stuff", :stuff2 => "pee")
-
-    checked_method(:bar, String, [Integer, :optional]) { |params| p params }
-    bar("foo", "bar")
 end
