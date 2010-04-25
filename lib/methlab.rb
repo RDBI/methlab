@@ -7,7 +7,8 @@ module MethLab
     # <drbrain> yeah, you may need to do magic to capture it
     # <drbrain> ah-ha! ruby -e 'p eval("self", TOPLEVEL_BINDING)'
     def self.integrate
-        ::Object.send(:include, MethLab)
+        eval("self", TOPLEVEL_BINDING).send(:include, MethLab)
+        ::Module.send(:include, MethLab)
     end
 
     def self.check_type(value_sig, value, key)
