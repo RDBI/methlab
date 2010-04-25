@@ -113,7 +113,6 @@ TODO
 * real documentation.
 * #respond_to? checks.
 * multiplexed array/hash methods.
-* anonymous methods.
 * construction of methods that can take inline blocks 
   (e.g., "def foo(&block)"). Proc can be used now, but it's
   not very "rubyish" syntax for the user.
