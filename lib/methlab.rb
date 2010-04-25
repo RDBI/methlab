@@ -2,6 +2,10 @@ module MethLab
 
     VERSION = "0.0.2"
 
+
+    # <drbrain> you may want to extend Main and include into Module instead of into Object
+    # <drbrain> yeah, you may need to do magic to capture it
+    # <drbrain> ah-ha! ruby -e 'p eval("self", TOPLEVEL_BINDING)'
     def self.integrate
         ::Object.send(:include, MethLab)
     end

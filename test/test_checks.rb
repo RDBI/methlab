@@ -9,9 +9,9 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'test/unit'
 require 'methlab'
 
-class CheckedClass
-    extend MethLab
+MethLab.integrate
 
+class CheckedClass
     def_named(:named, :stuff => String, :stuff2 => [ /pee/, :required ], :stuff3 => :required) do |params| 
         [:stuff, :stuff2, :stuff3].collect { |x| params[x] }
     end
@@ -24,8 +24,6 @@ class CheckedClass
         params
     end
 end
-
-extend MethLab
 
 $named_proc = build_named(:stuff => String) do |params|
     params
