@@ -86,8 +86,7 @@ module MethLab
         return args
     end
 
-    # FIXME build options that these leverage to define
-    def def_ordered(method_name, *args, &block)
+    def build_ordered(method_name, *args, &block)
         signature = args
 
         op_index = signature.index(:optional)
@@ -95,25 +94,33 @@ module MethLab
         if op_index and signature.reject { |x| x == :optional }.length != op_index
             raise ArgumentError, ":optional parameters must be at the end"
         end
-       
-        self.send(:define_method, method_name) do |*args| 
+        
+        proc do |*args| 
             params = MethLab.validate_array_params(signature, args)
             raise params if params.kind_of?(Exception)
             block.call(params)
         end
+    end
 
+    def def_ordered(method_name, *args, &block)
+        self.send(:define_method, method_name, &build_ordered(method_name, *args, &block)) 
         method_name
+    end
+
+    def build_named(method_name, *args, &block)
+        signature = args[0]
+
+        proc do |*args|
+            params = MethLab.validate_params(signature, *args)
+            raise params if params.kind_of?(Exception)
+            block.call(params)
+        end
     end
 
     def def_named(method_name, *args, &block)
         signature = args[0]
 
-        self.send(:define_method, method_name) do |*args| 
-            params = MethLab.validate_params(signature, *args)
-            raise params if params.kind_of?(Exception)
-            block.call(params)
-        end
-
+        self.send(:define_method, method_name, &build_named(method_name, *args, &block))
         method_name
     end
 
