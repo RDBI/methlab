@@ -110,7 +110,6 @@ consequences.
 TODO
 ----
 
-* real tests.
 * real documentation.
 * #respond_to? checks.
 * multiplexed array/hash methods.
@@ -118,6 +117,7 @@ TODO
 * construction of methods that can take inline blocks 
   (e.g., "def foo(&block)"). Proc can be used now, but it's
   not very "rubyish" syntax for the user.
+* Better handling in Modules (def self.meth(...))
 
 THANKS
 ------
