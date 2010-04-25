@@ -30,7 +30,6 @@ module MethLab
         return nil
     end
     
-    # FIXME 'not enough arguments'
     def self.validate_array_params(signature, args)
         unless args.kind_of?(Array)
             return ArgumentError.new("this method takes ordered arguments")
