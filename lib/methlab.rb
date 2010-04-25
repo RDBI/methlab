@@ -40,6 +40,12 @@ module MethLab
             return ArgumentError.new("too many arguments (#{args.length} for #{signature.length})")
         end
 
+        opt_index = signature.find_index { |x| [x].flatten.include?(:optional) } || 0
+        
+        if args.length < opt_index
+            return ArgumentError.new("not enough arguments (#{args.length} for minimum #{opt_index})")
+        end
+
         args.each_with_index do |value, key|
             unless signature[key]
                 return ArgumentError.new("argument #{key} does not exist in prototype")
@@ -75,7 +81,7 @@ module MethLab
         keys = signature.each_key.select { |key| [signature[key]].flatten.include?(:required) and !args.has_key?(key) }
 
         if keys.length > 0
-            return ArgumentError.new("argument(s) '#{keys.join(", ")}' were not found but are required by the prototype")
+            return ArgumentError.new("argument(s) '#{keys.sort_by { |x| x.to_s }.join(", ")}' were not found but are required by the prototype")
         end
 
         return args
