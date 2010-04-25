@@ -80,6 +80,10 @@ class TestChecks < Test::Unit::TestCase
             @checked.sequential("foo", 1, nil)
         end
 
+        assert_raises(ArgumentError.new("not enough arguments (0 for minimum 1)")) do
+            @checked.sequential()
+        end
+
         assert_equal(@checked.sequential("foo"), ["foo"])
         assert_equal(@checked.sequential("foo", 1), ["foo", 1])
     end
