@@ -25,6 +25,16 @@ class CheckedClass
     end
 end
 
+extend MethLab
+
+$named_proc = build_named(:stuff => String) do |params|
+    params
+end
+
+$ordered_proc = build_ordered((0..9)) do |params|
+    params
+end
+
 # FIXME module tests
 
 class TestChecks < Test::Unit::TestCase
@@ -59,6 +69,8 @@ class TestChecks < Test::Unit::TestCase
             @checked.named(:stuff => "foo", :stuff2 => "poopee", :stuff3 => 1), 
             ["foo", "poopee", 1]
         )
+
+        assert_equal($named_proc.call(:stuff => "foo"), { :stuff => "foo" })
     end
 
     def test_02_checked
@@ -104,5 +116,6 @@ class TestChecks < Test::Unit::TestCase
         end
 
         assert_equal(@checked.ranged(5), [5])
+        assert_equal($ordered_proc.call(5), [5])
     end
 end

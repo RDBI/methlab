@@ -86,7 +86,7 @@ module MethLab
         return args
     end
 
-    def build_ordered(method_name, *args, &block)
+    def build_ordered(*args, &block)
         signature = args
 
         op_index = signature.index(:optional)
@@ -103,11 +103,11 @@ module MethLab
     end
 
     def def_ordered(method_name, *args, &block)
-        self.send(:define_method, method_name, &build_ordered(method_name, *args, &block)) 
+        self.send(:define_method, method_name, &build_ordered(*args, &block)) 
         method_name
     end
 
-    def build_named(method_name, *args, &block)
+    def build_named(*args, &block)
         signature = args[0]
 
         proc do |*args|
@@ -120,7 +120,7 @@ module MethLab
     def def_named(method_name, *args, &block)
         signature = args[0]
 
-        self.send(:define_method, method_name, &build_named(method_name, *args, &block))
+        self.send(:define_method, method_name, &build_named(*args, &block))
         method_name
     end
 
