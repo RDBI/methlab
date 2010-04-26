@@ -12,6 +12,31 @@
 # syntax. Note that MethLab#def_named and MethLab#def_ordered will create named
 # methods in your class for you, but they use the build methods underneath the
 # hood.
+#
+# Here's an example:
+# 
+#   class Awesome
+#     def_ordered(:foo, String, [Integer, :optional]) do |params|
+#       str, int = params
+#       puts "I received #{str} as a String and #{int} as an Integer!"
+#     end
+# 
+#     def_named(:bar, :foo => String, :bar => [Integer, :required]) do |params|
+#       puts "I received #{params[:foo]} as a String and #{params[:bar]} as an Integer!"
+#     end
+#   end
+# 
+# Which yields these opportunities:
+# 
+#   a = Awesome.new
+#   a.foo(1, "str") # raises
+#   a.foo("str", 1) # prints the message
+#   a.foo("str")    # prints the message with nil as the integer
+# 
+#   a.bar(:foo => 1, :bar => "str") # raises
+#   a.bar(:foo => "str")            # raises (:bar is required)
+#   a.bar(:bar => 1)                # prints message, with nil string
+#   a.bar(:foo => "str", :bar => 1) # prints message
 # 
 # Using it is quite simple. Just remember a few things:
 #
