@@ -1,9 +1,14 @@
+begin
+    require 'rubygems'
+rescue LoadError
+end
+
 $:.unshift 'lib'
 require 'methlab'
 $:.shift
 
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 require 'rake/packagetask'
 require 'rake/gempackagetask'
 
@@ -38,14 +43,14 @@ Rake::TestTask.new do |t|
     t.verbose = true 
 end
 
-Rake::RDocTask.new do |rd|
+RDoc::Task.new do |rd|
     rd.rdoc_dir = "rdoc"
     #rd.main = "README.rdoc"
     rd.rdoc_files.include("./lib/**/*.rb")
 #    rd.rdoc_files.include("./bin/**/*")
-#     rd.rdoc_files.include("README.rdoc")
+    rd.rdoc_files.include("README")
 #     rd.rdoc_files.include("COPYING.rdoc")
-    rd.options = %w(-ap)
+    rd.options = %w(-a)
 end
 
 task :fixperms do
