@@ -4,7 +4,7 @@ Meth Lab is a method construction toolkit intended to ease parameter
 validation and a number of common "method definition patterns" seen in
 ruby code.
 
-SYNOPSIS
+=== SYNOPSIS
 --------
 
 A lot of times in the programming world, especially in dynamically
@@ -41,15 +41,15 @@ important boilerplate, by making it ideally less wordy and slamming it
 right in the prototype to easily evaluate what it does. Also, it has
 an awesomely apropos name.
 
-USAGE
------
+=== USAGE
+--------
 
 The API is less solid than I would like at this point, so I'm
 refraining from adding examples to this documentation quite yet. Until
 then, read the tests, they have plenty of examples.
 
-FAQ
----
+=== FAQ
+--------
 
 1) OMG OMG OMG OMG DUCK TYPING, you don't need this at all.
 
@@ -107,8 +107,8 @@ time, set the global $METHLAB_AUTOINTEGRATE to a true value before
 doing so. These both pollute ::Module and ::main, so be aware of the
 consequences.
 
-TODO
-----
+=== TODO
+--------
 
 * real documentation.
 * #respond_to? checks.
@@ -118,11 +118,13 @@ TODO
   not very "rubyish" syntax for the user.
 * Better handling in Modules (def self.meth(...))
 
-THANKS
-------
+=== THANKS
+--------
 
 * James Tucker (raggi) and "saywatmang" for inspiration and a bit of
   opinion and code review.
+* Eric Hodel (drbrain) for lots and lots of mentoring and generally being a
+  standup dude.
 * Params::Validate and Method::Signatures from CPAN for doing it right
   first. Imitation is the sincerest form of flattery and good ideas
   should not be kept in an ivory tower, so prematurely shut it plox.

@@ -45,7 +45,8 @@ end
 
 RDoc::Task.new do |rd|
     rd.rdoc_dir = "rdoc"
-    #rd.main = "README.rdoc"
+    rd.main = "README"
+    rd.title = "Meth Lab: A method toolkit for Ruby"
     rd.rdoc_files.include("./lib/**/*.rb")
 #    rd.rdoc_files.include("./bin/**/*")
     rd.rdoc_files.include("README")
