@@ -1,3 +1,29 @@
+#
+# MethLab - a method toolkit for ruby.
+#
+# MethLab is next to useless without integrating it into your classes. You can
+# do this several ways:
+#
+# * 'extend MethLab' in your class definitions before calling any of MethLab's helpers.
+# * 'MethLab.integrate' anywhere. This will inject it into ::main and ::Module.
+# * set $METHLAB_AUTOINTEGRATE to true before requiring methlab. This calls 'MethLab.integrate' automatically.
+#
+# Please see MethLab#build_ordered and MethLab#build_named for method creation
+# syntax. Note that MethLab#def_named and MethLab#def_ordered will create named
+# methods in your class for you, but they use the build methods underneath the
+# hood.
+# 
+# Using it is quite simple. Just remember a few things:
+#
+# * A class will always be compared with Object#kind_of? against the object. 
+# * An object implies certain semantics. Right now, we support direct checking against multiple objects:
+#   * Regexp's will convert the value to a string and compare them with String#=~
+#   * Ranges will use Range#include? to determine if the object occurs within the range.
+# * If you need more than one constraint per parameter, enclose these constraints within an array.
+# * Depending on the type of method you're constructing, there will be additional constraints both implied and explictly allowed:
+#   * named methods do not require any items by default, they must be specified as required.
+#   * ordered methods require everything by default, they must be specified as optional.
+#
 module MethLab
 
     VERSION = "0.0.2"

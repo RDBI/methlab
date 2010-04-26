@@ -44,9 +44,7 @@ an awesomely apropos name.
 === USAGE
 --------
 
-The API is less solid than I would like at this point, so I'm
-refraining from adding examples to this documentation quite yet. Until
-then, read the tests, they have plenty of examples.
+See the MethLab module documentation for details.
 
 === FAQ
 --------
