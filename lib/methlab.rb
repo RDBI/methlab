@@ -198,8 +198,6 @@ module MethLab
     # argument that binds to a method with the same name in the current class
     # or module. Currently cannot be a class method.
     def def_named(method_name, *args, &block)
-        signature = args[0]
-
         self.send(:define_method, method_name, &build_named(*args, &block))
         method_name
     end
