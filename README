@@ -133,7 +133,6 @@ consequences.
 === TODO
 --------
 
-* real documentation.
 * #respond_to? checks.
 * multiplexed array/hash methods.
 * construction of methods that can take inline blocks 
