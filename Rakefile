@@ -18,8 +18,9 @@ spec = Gem::Specification.new do |s|
   s.author = "Erik Hollensbe"
   s.email = "erik@hollensbe.org"
   s.summary = "A method construction and validation toolkit."
+  s.homepage = "http://github.com/erikh/methlab"
 
-  s.files = Dir["lib/**/*"]
+  s.files = Dir["lib/**/*"] + Dir["test/**/*"] + Dir["Rakefile"] + Dir["README"]
 
   s.has_rdoc = true
 end
