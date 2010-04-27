@@ -44,6 +44,10 @@
 # * An object implies certain semantics. Right now, we support direct checking against multiple objects:
 #   * Regexp's will convert the value to a string and compare them with String#=~
 #   * Ranges will use Range#include? to determine if the object occurs within the range.
+#   * A proc will allow you to do a custom check, taking one argument. Raises happen as such:
+#     * Returning false/nil will raise a generic error.
+#     * Returning a new exception object (e.g., ArgumentError.new) will raise your error as close to the call point as possible.
+#     * Raising yourself will raise in the validation routine, which will probably be confusing. Please use the above method.
 # * If you need more than one constraint per parameter, enclose these constraints within an array.
 # * Depending on the type of method you're constructing, there will be additional constraints both implied and explictly allowed:
 #   * named methods do not require any items by default, they must be specified as required.
@@ -76,6 +80,16 @@ module MethLab
         when Class 
             unless value.kind_of?(value_sig)
                 return ArgumentError.new("value of argument '#{key}' is an invalid type. Requires '#{value_sig}'")
+            end
+        when Proc
+            ret = value_sig.call(value)
+
+            if ret.kind_of?(Exception)
+                return ret
+            elsif !ret
+                return ArgumentError.new("value of argument '#{key}' does not pass custom validation.")
+            else
+                return nil
             end
         when Regexp
             unless value.to_s =~ value_sig
