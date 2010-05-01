@@ -23,6 +23,8 @@ class CheckedClass
     def_ordered(:ranged, (0..9)) do |params|
         params
     end
+
+    def_attr(:set_me, String)
 end
 
 $named_proc = build_named(:stuff => String) do |params|
@@ -115,5 +117,17 @@ class TestChecks < Test::Unit::TestCase
 
         assert_equal(@checked.ranged(5), [5])
         assert_equal($ordered_proc.call(5), [5])
+    end
+
+    def test_04_attr
+        assert(@checked.respond_to?(:set_me))
+
+        assert_raises(ArgumentError.new("value of argument '0' is an invalid type. Requires 'String'")) do
+            @checked.set_me = 0
+        end
+
+        @checked.set_me = "Foo"
+
+        assert_equal(@checked.set_me, "Foo")
     end
 end

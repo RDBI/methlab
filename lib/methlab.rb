@@ -227,6 +227,31 @@ module MethLab
         method_name
     end
 
+    # Similar to MethLab#build_ordered, but builds attributes similar to
+    # attr_accessor. Takes a single parameter which is the constraint
+    # specification.
+    #
+    # Example:
+    #
+    #   def_attr :set_me, String
+    #
+    #   # later on..
+    #   myobj.set_me = 0 # raises
+    #   myobj.set_me = "String" # valid
+    #
+    def def_attr(method_name, arg)
+        self.send(:define_method, (method_name.to_s + "=").to_sym) do |value| 
+            signature = [arg]
+            params = MethLab.validate_array_params(signature, [value])
+            raise params if params.kind_of?(Exception)
+            send(:instance_variable_set, "@" + method_name.to_s, value)
+        end
+
+        self.send(:define_method, method_name) do
+            instance_variable_get("@" + method_name.to_s)
+        end
+    end
+
     if $METHLAB_AUTOINTEGRATE
         integrate
     end
