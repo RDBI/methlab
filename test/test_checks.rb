@@ -25,6 +25,14 @@ class CheckedClass
     end
 
     def_attr(:set_me, String)
+
+    def_ordered(:proc_nil, proc { |x| x.nil? }) do |params|
+        params
+    end
+
+    def_ordered(:proc_raise, proc { |x| ArgumentError.new("foo") }) do |params|
+        params
+    end
 end
 
 $named_proc = build_named(:stuff => String) do |params|
@@ -119,7 +127,25 @@ class TestChecks < Test::Unit::TestCase
         assert_equal($ordered_proc.call(5), [5])
     end
 
-    def test_04_attr
+    def test_04_procs
+        assert(@checked.respond_to?(:proc_nil))
+
+        assert_raises(ArgumentError.new("value of argument '0' does not pass custom validation.")) do
+            @checked.proc_nil(true)
+        end
+
+        assert_equal(@checked.proc_nil(nil), [nil])
+        
+        assert(@checked.respond_to?(:proc_nil))
+
+        assert_raises(ArgumentError.new("foo")) do
+            @checked.proc_raise(true)
+        end
+
+        assert_equal(@checked.proc_nil(nil), [nil])
+    end
+
+    def test_05_attr
         assert(@checked.respond_to?(:set_me))
 
         assert_raises(ArgumentError.new("value of argument '0' is an invalid type. Requires 'String'")) do
