@@ -139,6 +139,7 @@ consequences.
   (e.g., "def foo(&block)"). Proc can be used now, but it's
   not very "rubyish" syntax for the user.
 * Better handling in Modules (def self.meth(...))
+* Default values
 
 === THANKS
 --------

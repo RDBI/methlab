@@ -62,3 +62,7 @@ task :build => [:gem, :repackage]
 task :distclean => [:clobber_package, :clobber_rdoc]
 desc "Clean the source tree"
 task :clean => [:distclean]
+
+task :to_blog => [:clobber_rdoc, :rdoc] do
+    sh "rm -r $git/blog/content/docs/methlab && mv rdoc $git/blog/content/docs/methlab"
+end
