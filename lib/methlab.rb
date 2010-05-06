@@ -129,7 +129,7 @@ module MethLab
 
             if signature[key]
                 ret = check_type(signature[key], value, key)
-                return ret unless ret.nil?
+                return ret if ret
             end
         end
 
@@ -153,7 +153,7 @@ module MethLab
 
             if signature[key]
                 ret = check_type(signature[key], value, key)
-                return ret unless ret.nil?
+                return ret if ret
             end
         end
 
