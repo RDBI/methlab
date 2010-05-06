@@ -127,7 +127,7 @@ module MethLab
                 return ArgumentError.new("argument #{key} does not exist in prototype")
             end
 
-            if !signature[key].nil?
+            if signature[key]
                 ret = check_type(signature[key], value, key)
                 return ret unless ret.nil?
             end
@@ -151,7 +151,7 @@ module MethLab
                 return ArgumentError.new("argument '#{key}' does not exist in prototype")
             end
 
-            if !signature[key].nil?
+            if signature[key]
                 ret = check_type(signature[key], value, key)
                 return ret unless ret.nil?
             end
@@ -204,7 +204,7 @@ module MethLab
     # or module. Currently cannot be a class method.
     def def_ordered(method_name, *args, &block)
         self.send(:define_method, method_name, &build_ordered(*args, &block)) 
-        method_name
+        return method_name
     end
 
     # Builds an unbound method as a proc with named (Hash) parameters.
@@ -238,7 +238,7 @@ module MethLab
     # or module. Currently cannot be a class method.
     def def_named(method_name, *args, &block)
         self.send(:define_method, method_name, &build_named(*args, &block))
-        method_name
+        return method_name
     end
 
     # Similar to MethLab#build_ordered, but builds attributes similar to
