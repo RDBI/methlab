@@ -33,6 +33,16 @@ class CheckedClass
     def_ordered(:proc_raise, proc { |x| ArgumentError.new("foo") }) do |params|
         params
     end
+
+    def_named(:has_named_rt, :stuff => {:respond_to => :replace}) do |params|
+        params[:stuff]
+    end
+
+    def_ordered(:has_ordered_rt, {:respond_to => :replace}) do |params|
+        params[0]
+    end
+
+    def_attr :rt, {:respond_to => :replace}
 end
 
 $named_proc = build_named(:stuff => String) do |params|
@@ -155,5 +165,29 @@ class TestChecks < Test::Unit::TestCase
         @checked.set_me = "Foo"
 
         assert_equal(@checked.set_me, "Foo")
+    end
+
+    def test_06_respond_to
+        assert(@checked.respond_to?(:has_named_rt))
+        assert(@checked.respond_to?(:has_ordered_rt))
+        assert(@checked.respond_to?(:rt))
+
+        assert_raises(ArgumentError.new("value of argument '0' does not respond to 'replace'")) do
+            @checked.rt = nil
+        end
+
+        assert_raises(ArgumentError.new("value of argument '0' does not respond to 'replace'")) do
+            @checked.has_ordered_rt(nil)
+        end
+        
+        assert_raises(ArgumentError.new("value of argument 'stuff' does not respond to 'replace'")) do
+            @checked.has_named_rt(:stuff => nil)
+        end
+
+        @checked.rt = "foo"
+
+        assert(@checked.rt, "foo")
+        assert(@checked.has_ordered_rt("foo"), "foo")
+        assert(@checked.has_named_rt(:stuff => "foo"), "foo")
     end
 end

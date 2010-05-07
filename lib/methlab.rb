@@ -69,13 +69,63 @@ module MethLab
 
     # internal, please do not use directly.
     #
+    # used to set defaults on parameters that require one
+    def self.set_defaults(signature, params, kind=:array)
+        params = params[0] if kind == :hash
+
+        signature.each_with_index do |value, index|
+            case kind
+            when :array
+                if value.kind_of?(Array)
+                    if hashes = value.find_all { |x| x.kind_of?(Hash) } and !hashes.empty?
+                        hashes.each do |hash|
+                            if hash.has_key?(:default) and (params.length - 1) < index
+                                params[index] = hash[:default]
+                            end
+                        end
+                    end
+                end
+            when :hash
+                if value[1].kind_of?(Array)
+                    if hashes = value[1].find_all { |x| x.kind_of?(Hash) } and !hashes.empty?
+                        hashes.each do |hash|
+                            if hash.has_key?(:default) and !params.has_key?(value[0]) 
+                                params[value[0]] = hash[:default]
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
+    # internal, please do not use directly.
+    #
+    # used to perform our standard checks that are supplied via hash.
+    def self.check_hash_types(value_key, value_value, value, key)
+        case value_key
+        when :respond_to
+            unless value.respond_to?(value_value)
+                return ArgumentError.new("value of argument '#{key}' does not respond to '#{value_value}'")
+            end
+        end
+        return nil
+    end
+
+    # internal, please do not use directly.
+    #
     # used to perform our standard checks.
     def self.check_type(value_sig, value, key)
         case value_sig
         when Array
             value_sig.flatten.each do |vs|
                 ret = check_type(vs, value, key)
-                return ret unless ret.nil?
+                return ret if ret
+            end
+        when Hash
+            value_sig.each do |value_key, value_value| # GUH
+                ret = check_hash_types(value_key, value_value, value, key)
+                return ret if ret
             end
         when Class 
             unless value.kind_of?(value_sig)
@@ -193,6 +243,7 @@ module MethLab
         end
         
         proc do |*args| 
+            MethLab.set_defaults(signature, args, :array)
             params = MethLab.validate_array_params(signature, args)
             raise params if params.kind_of?(Exception)
             block.call(params)
@@ -227,6 +278,8 @@ module MethLab
         signature = args[0]
 
         proc do |*args|
+            args = [{}] if args.empty?
+            MethLab.set_defaults(signature, args, :hash)
             params = MethLab.validate_params(signature, *args)
             raise params if params.kind_of?(Exception)
             block.call(params)
@@ -254,15 +307,22 @@ module MethLab
     #   myobj.set_me = "String" # valid
     #
     def def_attr(method_name, arg)
+
         self.send(:define_method, (method_name.to_s + "=").to_sym) do |value| 
             signature = [arg]
             params = MethLab.validate_array_params(signature, [value])
             raise params if params.kind_of?(Exception)
-            send(:instance_variable_set, "@" + method_name.to_s, value)
+            send(:instance_variable_set, "@" + method_name.to_s, params[0])
         end
 
         self.send(:define_method, method_name) do
-            instance_variable_get("@" + method_name.to_s)
+            unless self.instance_variables.select { |x| x == "@#{method_name}" }[0]
+                args = []
+                MethLab.set_defaults([arg], args, :array)
+                send(:instance_variable_set, "@#{method_name}", args[0])
+            end
+
+            instance_variable_get("@#{method_name}")
         end
     end
 
