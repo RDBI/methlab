@@ -48,6 +48,10 @@
 #     * Returning false/nil will raise a generic error.
 #     * Returning a new exception object (e.g., ArgumentError.new) will raise your error as close to the call point as possible.
 #     * Raising yourself will raise in the validation routine, which will probably be confusing. Please use the above method.
+#   * A symbol is a pragma that implies a constraint -- see below.
+#   * A hash is a way of specifying a pragma (or check) with a parameter:
+#     * :respond_to calls Object#respond_to? on the method named as the value (a symbol) 
+#     * :default specifies a default argument. This is still checked, so get it right!
 # * If you need more than one constraint per parameter, enclose these constraints within an array.
 # * Depending on the type of method you're constructing, there will be additional constraints both implied and explictly allowed:
 #   * named methods do not require any items by default, they must be specified as required.
