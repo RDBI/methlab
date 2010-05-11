@@ -320,7 +320,7 @@ module MethLab
         end
 
         self.send(:define_method, method_name) do
-            unless self.instance_variables.select { |x| x == "@#{method_name}" }[0]
+            unless self.instance_variables.select { |x| x == "@#{method_name}" || x == "@#{method_name}".to_sym }[0]
                 args = []
                 MethLab.set_defaults([arg], args, :array)
                 send(:instance_variable_set, "@#{method_name}", args[0])
