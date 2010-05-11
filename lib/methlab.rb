@@ -59,7 +59,7 @@
 #
 module MethLab
 
-    VERSION = "0.0.5"
+    VERSION = "0.0.7"
 
     # Integrates MethLab into all namespaces. It does this by patching itself
     # into ::main and Module.
