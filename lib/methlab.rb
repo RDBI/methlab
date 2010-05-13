@@ -24,6 +24,13 @@
 #     def_named(:bar, :foo => String, :bar => [Integer, :required]) do |params|
 #       puts "I received #{params[:foo]} as a String and #{params[:bar]} as an Integer!"
 #     end
+#
+#     def some_method(*args) # a hash
+#       params = MethLab.validate_params(:foo => String, :bar => [Integer, :required])
+#       raise params if params.kind_of? Exception
+#
+#       puts "I received #{params[:foo]} as a String and #{params[:bar]} as an Integer!"
+#     end
 #   end
 # 
 # Which yields these opportunities:
@@ -38,6 +45,8 @@
 #   a.bar(:bar => 1)                # prints message, with nil string
 #   a.bar(:foo => "str", :bar => 1) # prints message
 # 
+#   a.some_method(:foo => "str", :bar => 1) # prints message
+#
 # Using it is quite simple. Just remember a few things:
 #
 # * A class will always be compared with Object#kind_of? against the object. 
@@ -59,7 +68,7 @@
 #
 module MethLab
 
-    VERSION = "0.0.7"
+    VERSION = "0.0.8"
 
     # Integrates MethLab into all namespaces. It does this by patching itself
     # into ::main and Module.
@@ -158,10 +167,18 @@ module MethLab
         return nil
     end
    
-    # internal, do not use directly.
+    # This method takes the same signature as Methlab#build_ordered, and the
+    # arguments you wish to validate. It will process everything just like you
+    # built a method to handle this, but just with the arguments you prefer.
     #
-    # used to check the arity of array (ordered) method calls.
+    # This method will return either an Exception or an Array; if you receive
+    # an exception, this means that parsing errors occured, you may raise this
+    # exception from the point of your method if you wish.
     def self.validate_array_params(signature, args)
+        args = [] unless args
+
+        MethLab.set_defaults(signature, args, :array)
+
         unless args.kind_of?(Array)
             return ArgumentError.new("this method takes ordered arguments")
         end
@@ -190,10 +207,16 @@ module MethLab
         return args
     end
 
-    # internal, do not use directly.
+    # This method takes the same signature as Methlab#build_named, and the
+    # arguments you wish to validate. It will process everything just like you
+    # built a method to handle this, but just with the arguments you prefer.
     #
-    # Used to check the sanity of parameterized (named) method calls.
+    # This method will return either an Exception or an Array; if you receive
+    # an exception, this means that parsing errors occured, you may raise this
+    # exception from the point of your method if you wish.
     def self.validate_params(signature, *args)
+        args = [{}] if args.empty?
+        MethLab.set_defaults(signature, args, :hash)
         args = args[0]
         
         unless args.kind_of?(Hash)
@@ -247,7 +270,6 @@ module MethLab
         end
         
         proc do |*args| 
-            MethLab.set_defaults(signature, args, :array)
             params = MethLab.validate_array_params(signature, args)
             raise params if params.kind_of?(Exception)
             block.call(params)
@@ -282,8 +304,6 @@ module MethLab
         signature = args[0]
 
         proc do |*args|
-            args = [{}] if args.empty?
-            MethLab.set_defaults(signature, args, :hash)
             params = MethLab.validate_params(signature, *args)
             raise params if params.kind_of?(Exception)
             block.call(params)

@@ -55,6 +55,13 @@ So, let's do something like this:
     def_named(:bar, :foo => String, :bar => [Integer, :required]) do |params|
       puts "I received #{params[:foo]} as a String and #{params[:bar]} as an Integer!"
     end
+
+    def some_method(*args) # a hash
+      params = MethLab.validate_params(:foo => String, :bar => [Integer, :required])
+      raise params if params.kind_of? Exception
+
+      puts "I received #{params[:foo]} as a String and #{params[:bar]} as an Integer!"
+    end
   end
 
 Which yields these opportunities:
@@ -68,6 +75,8 @@ Which yields these opportunities:
   a.bar(:foo => "str")            # raises (:bar is required)
   a.bar(:bar => 1)                # prints message, with nil string
   a.bar(:foo => "str", :bar => 1) # prints message
+
+  a.some_method(:foo => "str", :bar => 1) # prints message
 
 See the MethLab module documentation for details.
 
