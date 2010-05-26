@@ -68,7 +68,7 @@
 #
 module MethLab
 
-    VERSION = "0.0.8"
+    VERSION = "0.0.9"
 
     # Integrates MethLab into all namespaces. It does this by patching itself
     # into ::main and Module.
@@ -347,6 +347,26 @@ module MethLab
             end
 
             instance_variable_get("@#{method_name}")
+        end
+    end
+
+    #
+    # inline is useful to spec out several methods at once to yield similar values.
+    #
+    # Usage:
+    # 
+    #   class Foo
+    #     inline(:one, :two, :three) { 1 }
+    #   end
+    #   
+    #   f = Foo.new
+    #   f.one   # => 1
+    #   f.two   # => 1
+    #   f.three # => 1
+    #
+    def inline(*method_names, &block)
+        method_names.each do |meth|
+            self.send(:define_method, meth, block)
         end
     end
 
