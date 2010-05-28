@@ -1,6 +1,6 @@
 begin
-    require 'rubygems'
-    gem 'test-unit'
+  require 'rubygems'
+  gem 'test-unit'
 rescue LoadError
 end
 
@@ -10,18 +10,18 @@ require 'test/unit'
 require 'methlab'
 
 class InlineTest
-    inline(:foo) { nil }
-    inline(:bar, :baz, :quux) { 1 }
+  inline(:foo) { nil }
+  inline(:bar, :baz, :quux) { 1 }
 end
 
 class TestInline < Test::Unit::TestCase
-    def test_01_inline_works
-        it = InlineTest.new
+  def test_01_inline_works
+    it = InlineTest.new
 
-        assert_equal(nil, it.foo)
+    assert_equal(nil, it.foo)
 
-        [:bar, :baz, :quux].each do |meth|
-            assert_equal(1, it.send(meth))
-        end
+    [:bar, :baz, :quux].each do |meth|
+      assert_equal(1, it.send(meth))
     end
+  end
 end
