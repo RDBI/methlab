@@ -10,8 +10,12 @@ require 'test/unit'
 require 'methlab'
 
 class InlineTest
+  extend MethLab
+
   inline(:foo) { nil }
   inline(:bar, :baz, :quux) { 1 }
+
+  attr_threaded_accessor(:one, :two)
 end
 
 class TestInline < Test::Unit::TestCase
@@ -23,5 +27,17 @@ class TestInline < Test::Unit::TestCase
     [:bar, :baz, :quux].each do |meth|
       assert_equal(1, it.send(meth))
     end
+  end
+
+  def test_02_attr_threaded_accessor
+    it = InlineTest.new
+
+    it.one = 1
+    it.two = 2
+
+    assert_equal(it.one, 1)
+    assert_equal(it.two, 2)
+    assert_equal(Thread.current[:one], 1)
+    assert_equal(Thread.current[:two], 2)
   end
 end

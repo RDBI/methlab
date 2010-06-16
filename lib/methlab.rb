@@ -370,6 +370,37 @@ module MethLab
         end
     end
 
+    #
+    # attr_threaded_accessor creates thread-local accessors via
+    # +Thread.current+. As a result, while these are accessed in your class,
+    # they live in a flat namespace, and must be used with caution.
+    #
+    # Usage:
+    #
+    #   class Foo
+    #     attr_threaded_accessor(:one, :two)
+    #
+    #     def bar
+    #       self.one = 1
+    #       self.two = 2
+    #     end
+    #   end
+    #
+    #   f = Foo.new
+    #   f.one # 1
+    #   f.two # 2
+    #
+    #   Thread.current[:one] # => 1
+    #   Thread.current[:two] # => 2
+    #
+    def attr_threaded_accessor(*method_names)
+        method_names.each do |meth|
+            self.send(:define_method, meth, proc { Thread.current[meth] })
+            meth2 = meth.to_s.gsub(/$/, '=').to_sym
+            self.send(:define_method, meth2, proc { |x| Thread.current[meth] = x })
+        end
+    end
+
     if $METHLAB_AUTOINTEGRATE
         integrate
     end
