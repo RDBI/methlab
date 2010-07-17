@@ -67,9 +67,6 @@
 #   * ordered methods require everything by default, they must be specified as optional.
 #
 module MethLab
-
-    VERSION = "0.1.0"
-
     # Integrates MethLab into all namespaces. It does this by patching itself
     # into ::main and Module.
     #

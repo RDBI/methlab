@@ -1,69 +1,104 @@
+require 'rubygems'
+require 'rake'
+
+version = (File.exist?('VERSION') ? File.read('VERSION') : "").chomp
+
 begin
-  require 'rubygems'
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "methlab"
+    gem.email = "erik@hollensbe.org"
+    gem.summary = "A method construction and validation toolkit."
+    gem.homepage = "http://github.com/RDBI/methlab"
+    gem.authors = ["Erik Hollensbe"]
+
+    #gem.add_development_dependency 'rdoc'
+    ## for now, install hanna from here: http://github.com/erikh/hanna
+    #gem.add_development_dependency 'hanna'
+    unless RUBY_VERSION =~ /^1.9/
+      gem.add_development_dependency 'fastercsv'
+    end
+
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
 
-$:.unshift 'lib'
-require 'methlab'
-$:.shift
-
-require 'rake/testtask'
-require 'rdoc/task'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
-
-spec = Gem::Specification.new do |s|
-  s.name = "methlab"
-  s.version = MethLab::VERSION
-  s.author = "Erik Hollensbe"
-  s.email = "erik@hollensbe.org"
-  s.summary = "A method construction and validation toolkit."
-  s.homepage = "http://github.com/erikh/methlab"
-
-  s.files = Dir["lib/**/*"] + Dir["test/**/*"] + Dir["Rakefile"] + Dir["README"]
-
-  s.has_rdoc = true
+begin
+  gem 'test-unit'
+  require 'rake/testtask'
+  Rake::TestTask.new(:test) do |test|
+    test.libs << 'lib' << 'test'
+    test.pattern = 'test/**/test_*.rb'
+    test.verbose = true
+  end
+rescue LoadError
+  task :test do
+    abort "test-unit gem is not available. In order to run test-unit, you must: sudo gem install test-unit"
+  end
 end
 
-Rake::GemPackageTask.new(spec) do |s|
+
+begin
+  require 'rcov/rcovtask'
+  Rcov::RcovTask.new do |test|
+    test.libs << 'test'
+    test.pattern = 'test/**/test_*.rb'
+    test.verbose = true
+  end
+rescue LoadError
+  task :rcov do
+    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
+  end
 end
 
-Rake::PackageTask.new(spec.name, spec.version) do |p|
-  p.need_tar_gz = true
-  p.need_zip = true
-  p.package_files.include("./bin/**/*")
-  p.package_files.include("./Rakefile")
-  p.package_files.include("./lib/**/*.rb")
-  p.package_files.include("./test/**/*")
-  p.package_files.include("README")
+task :test => :check_dependencies
+
+begin
+  require 'roodi'
+  require 'roodi_task'
+  RoodiTask.new do |t|
+    t.verbose = false
+  end
+rescue LoadError
+  task :roodi do
+    abort "Roodi is not available. In order to run roodi, you must: sudo gem install roodi"
+  end
 end
 
-Rake::TestTask.new do |t|
-  t.libs << 'lib'
-  t.test_files = FileList['test/test*.rb']
-  t.verbose = true 
-end
+task :default => :test
 
-RDoc::Task.new do |rd|
-  rd.rdoc_dir = "rdoc"
-  rd.main = "README"
-  rd.title = "MethLab: A method toolkit for Ruby"
-  rd.rdoc_files.include("./lib/**/*.rb")
-  rd.rdoc_files.include("README")
-  rd.options = %w(-a)
-end
+begin
+  require 'hanna'
+  require 'rdoc/task'
+  RDoc::Task.new do |rdoc|
+    version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
-task :fixperms do
-  chmod(0644, Dir['**/*'])  
+    rdoc.options.push '-f', 'hanna'
+    rdoc.main = 'README.rdoc'
+    rdoc.rdoc_dir = 'rdoc'
+    rdoc.title = "RDBI #{version} Documentation"
+    rdoc.rdoc_files.include('README*')
+    rdoc.rdoc_files.include('lib/**/*.rb')
+  end
+rescue LoadError => e
+  rdoc_missing = lambda do
+    abort "What, were you born in a barn? Install rdoc and hanna at http://github.com/erikh/hanna ."
+  end
+  task :rdoc, &rdoc_missing
+  task :clobber_rdoc, &rdoc_missing
 end
-
-task :default => [:clean, :test, :build]
-desc "Build Packages"
-task :build => [:gem, :repackage]
-task :distclean => [:clobber_package, :clobber_rdoc]
-desc "Clean the source tree"
-task :clean => [:distclean]
 
 task :to_blog => [:clobber_rdoc, :rdoc] do
-  sh "rm -fr $git/blog/content/docs/methlab && mv rdoc $git/blog/content/docs/methlab"
+  sh "rm -fr $git/blog/content/docs/rdbi && mv doc $git/blog/content/docs/rdbi"
 end
+
+task :install => [:test, :build]
+
+task :docview => [:rerdoc] do
+  sh "open rdoc/index.html"
+end
+
+# vim: syntax=ruby ts=2 et sw=2 sts=2
