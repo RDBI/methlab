@@ -12,12 +12,11 @@ begin
     gem.homepage = "http://github.com/RDBI/methlab"
     gem.authors = ["Erik Hollensbe"]
 
-    #gem.add_development_dependency 'rdoc'
-    ## for now, install hanna from here: http://github.com/erikh/hanna
-    #gem.add_development_dependency 'hanna'
-    unless RUBY_VERSION =~ /^1.9/
-      gem.add_development_dependency 'fastercsv'
-    end
+    gem.add_development_dependency 'rdoc'
+    gem.add_development_dependency 'test-unit'
+
+    ## for now, install hanna from here: http://github.com/raggi/hanna
+    gem.add_development_dependency 'hanna'
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
@@ -89,10 +88,6 @@ rescue LoadError => e
   end
   task :rdoc, &rdoc_missing
   task :clobber_rdoc, &rdoc_missing
-end
-
-task :to_blog => [:clobber_rdoc, :rdoc] do
-  sh "rm -fr $git/blog/content/docs/rdbi && mv doc $git/blog/content/docs/rdbi"
 end
 
 task :install => [:test, :build]
